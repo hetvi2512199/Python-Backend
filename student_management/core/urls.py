@@ -19,17 +19,12 @@ from core import views as core_views
 
 
 urlpatterns = [
-    path('index',core_views.IndexView.as_view(),name= 'index'),
-    path('index/edit/',core_views.IndexUpdateView.as_view(),name='index-edit'),
-    path('api/collage/',
-    core_views.CollageAPIView.as_view(),name = "collage"
-    ),
-    path('api/delete-collage/<int:id>/',
-    core_views.CollageDeleteAPIView.as_view(),name = "delete-collage"
-    ),
-    path('api/update-collage/<int:id>/',
-    core_views.UpdateCollageAPIView.as_view(),name = "collage-collage"
-    ),
+  
+    path('crud/',core_views.CrudView.as_view(), name='crud_ajax'),
+    path('ajax/crud/create/',core_views.CreateCrudUser.as_view(), name='crud_ajax_create'),
+    path('ajax/crud/update/',  core_views.UpdateCrudUser.as_view(), name='crud_ajax_update'),
+    path('ajax/crud/delete/',  core_views.DeleteCrudUser.as_view(), name='crud_ajax_delete'),
+    
     
  
 ]

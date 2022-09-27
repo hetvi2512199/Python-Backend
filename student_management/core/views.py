@@ -4,72 +4,66 @@ from rest_framework.views import APIView,View
 
 from core import models as core_models
 from core import serializers as core_serializer
-# Create your views here.
+# Create your views here
+
+from django.views.generic import ListView
+from .models import CrudUser
 
 
+class CrudView(ListView):
+    model = CrudUser
+    template_name = 'core/crud.html'
+    context_object_name = 'users'
 
+from .models import CrudUser
+from django.views.generic import View
+from django.http import JsonResponse
 
-class IndexView(View):
-    def get(self, request):
-        return render(request,'core/collages.html')
+class CreateCrudUser(View):
+    def  get(self, request):
+        name1 = request.GET.get('name', None)
+        address1 = request.GET.get('address', None)
+        age1 = request.GET.get('age', None)
 
-class IndexUpdateView(View):
-    def get(self,request):
-        return render(request,'core/collages_update.html')
-
-#create
-class CollageAPIView(APIView):
-    def post(self , request ):
-        req_data = request.data
-
-        serializer_instance = core_serializer.CollageSerializer(data = req_data)
-        if not serializer_instance.is_valid():
-            return Response(status=400, data = {"message":"data not found"})
-
-        collage_create_instance = core_models.Collages.objects.create(
-
-            collage_name = serializer_instance.validated_data.get('collage_name'),
-            code = serializer_instance.validated_data.get("code"),
-            collages_type = serializer_instance.validated_data.get('collages_type'),
-            city = serializer_instance.validated_data.get("city")
+        obj = CrudUser.objects.create(
+            name = name1,
+            address = address1,
+            age = age1
         )
-        return Response(status = 200 ,data = {"data":collage_create_instance.collage_get_details()})
+
+        user = {'id':obj.id,'name':obj.name,'address':obj.address,'age':obj.age}
+
+        data = {
+            'user': user
+        }
+        return JsonResponse(data)
+
+class UpdateCrudUser(View):
+    def  get(self, request):
+        id1 = request.GET.get('id', None)
+        name1 = request.GET.get('name', None)
+        address1 = request.GET.get('address', None)
+        age1 = request.GET.get('age', None)
+
+        obj = CrudUser.objects.get(id=id1)
+        obj.name = name1
+        obj.address = address1
+        obj.age = age1
+        obj.save()
+
+        user = {'id':obj.id,'name':obj.name,'address':obj.address,'age':obj.age}
+
+        data = {
+            'user': user
+        }
+        return JsonResponse(data)
 
 
-
-#delete
-class CollageDeleteAPIView(APIView):
-    def post(self,request , id):
-        collage_instance = core_models.Collages.objects.filter(id = id).last()
-        if not collage_instance:
-            return Response(status=400, data = {"message":"collage not exist"})
-
-        collage_instance.delete()
-        return Response(status = 200 ,data = {"message":"Collage successfully removed"})
-   
-#update
-class UpdateCollageAPIView(APIView):
-    def post(self ,request ,id ):
-        req_data = request.data
-        req_data.update({"collage_id":id})
-
-        serializer_instance = core_serializer.UpdateCollageSerializer(data = req_data)
-        if not serializer_instance.is_valid():
-            return Response(status=400, data = {"message":"school not exits"})
-
-        collage_instance = serializer_instance.validated_data.get("collage_id")
-
-        collage_name = serializer_instance.validated_data.get("collage_name")
-        code = serializer_instance.validated_data.get("code")
-        collages_type = serializer_instance.validated_data.get("collages_type")
-        city = serializer_instance.validated_data.get("city")
-
-        collage_instance.collage_name = collage_name
-        collage_instance.code = code
-        collage_instance.collages_type = collages_type
-        collage_instance.city = city
-
-        collage_instance.save()
-        return Response(status = 200 ,data = {"data":collage_instance.collage_get_details()})
-
-
+class DeleteCrudUser(View):
+    def  get(self, request):
+        id1 = request.GET.get('id', None)
+        CrudUser.objects.get(id=id1).delete()
+        data = {
+            'deleted': True
+        }
+        return JsonResponse(data)

@@ -30,3 +30,9 @@ class Collages(BaseModel):
             "collages_type":self.collages_type,
             "city":self.city,
         }
+
+
+class CrudUser(BaseModel):
+    name = models.CharField(max_length=30, blank=True)
+    address = models.CharField(max_length=100, blank=True)
+    age = models.IntegerField(blank=True, null=True)
