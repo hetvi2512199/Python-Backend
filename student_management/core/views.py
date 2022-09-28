@@ -9,15 +9,15 @@ from core import serializers as core_serializer
 from django.views.generic import ListView
 from .models import CrudUser
 
+from .models import CrudUser
+from django.views.generic import View
+from django.http import JsonResponse
 
 class CrudView(ListView):
     model = CrudUser
     template_name = 'core/crud.html'
     context_object_name = 'users'
 
-from .models import CrudUser
-from django.views.generic import View
-from django.http import JsonResponse
 
 class CreateCrudUser(View):
     def  get(self, request):
